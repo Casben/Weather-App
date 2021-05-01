@@ -9,11 +9,15 @@ import UIKit
 
 class WeatherVC: UIViewController {
 
+    @IBOutlet weak var forcastView: UIView!
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        configure()
     }
 
 
+    func configure() {
+        forcastView.layer.cornerRadius = 10
+    }
 }
 
