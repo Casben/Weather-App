@@ -6,10 +6,15 @@
 //
 
 import UIKit
+import CoreLocation
 
 class WeatherVC: UIViewController {
 
     @IBOutlet weak var dateLabel: UILabel!
+    @IBOutlet weak var cityLabel: UILabel!
+    @IBOutlet weak var temperatureLabel: UILabel!
+    @IBOutlet weak var conditionImageView: UIImageView!
+    @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var forcastView: UIView!
     @IBOutlet weak var forcastControl: UISegmentedControl!
     
@@ -18,6 +23,9 @@ class WeatherVC: UIViewController {
     @IBOutlet weak var detailView3: WeatherDetailView!
     @IBOutlet weak var detailView4: WeatherDetailView!
     @IBOutlet weak var detailView5: WeatherDetailView!
+    
+    var weatherManager = WeatherManager()
+    let locationManager = CLLocationManager()
     
     
     override func viewDidLoad() {
@@ -28,11 +36,13 @@ class WeatherVC: UIViewController {
     
 
     func configure() {
+        forcastView.alpha = 0
         forcastView.layer.cornerRadius = 10
         forcastControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.white], for: .selected)
-        forcastControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.black], for: .normal)
+        forcastControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor(red: 22 / 255, green: 54 / 255, blue: 58 / 255, alpha: 0.64)], for: .normal)
         forcastControl.addTarget(self, action: #selector(forcastControlToggled), for: .valueChanged)
         configureDate()
+        configureLocationManager()
     }
     
     func configureDate() {
@@ -45,12 +55,23 @@ class WeatherVC: UIViewController {
         case "1":
             currentDate.append("st")
             dateLabel.text = currentDate
-        default:
+        case "2":
             currentDate.append("nd")
             dateLabel.text = currentDate
+        case "3":
+            currentDate.append("rd")
+            dateLabel.text = currentDate
+        default:
+            currentDate.append("th")
+            dateLabel.text = currentDate
         }
-        
-        
+    }
+    
+    func configureLocationManager() {
+        locationManager.delegate = self
+        weatherManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.requestLocation()
     }
 
     
@@ -61,3 +82,44 @@ class WeatherVC: UIViewController {
     }
 }
 
+extension WeatherVC: WeatherManagerDelegate {
+    func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
+        DispatchQueue.main.async {
+            self.temperatureLabel.text = weather.temperatureString + "°"
+            self.conditionImageView.image = UIImage(systemName: weather.conditionName)
+            self.cityLabel.text = weather.cityName
+            self.descriptionLabel.text = weather.description
+            
+            
+        }
+        
+        DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.5) {
+            UIView.animate(withDuration: 0.75) {
+                self.forcastView.alpha = 1
+            }
+        }
+        
+        
+    }
+    
+    func didFailWithError(error: Error) {
+        print(error)
+    }
+    
+    
+}
+
+extension WeatherVC: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.last {
+            locationManager.stopUpdatingLocation()
+            let lat = location.coordinate.latitude
+            let lon = location.coordinate.longitude
+            weatherManager.fetchWeather(latitude: lat, longitude: lon)
+            weatherManager.fetchHourlyForecast(latitude: lat, longitude: lon)
+        }
+    }
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print(error)
+    }
+}
