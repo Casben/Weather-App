@@ -14,6 +14,7 @@
 		CB2067E5263D957E003CE39E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB2067E4263D957E003CE39E /* Assets.xcassets */; };
 		CB2067E8263D957E003CE39E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CB2067E6263D957E003CE39E /* LaunchScreen.storyboard */; };
 		CB2067F3263E457C003CE39E /* WeatherIconImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB2067F2263E457C003CE39E /* WeatherIconImageView.swift */; };
+		CB2067F5263F7E6E003CE39E /* WeatherDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB2067F4263F7E6E003CE39E /* WeatherDetailView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		CB2067E7263D957E003CE39E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CB2067E9263D957E003CE39E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CB2067F2263E457C003CE39E /* WeatherIconImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherIconImageView.swift; sourceTree = "<group>"; };
+		CB2067F4263F7E6E003CE39E /* WeatherDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,7 +65,6 @@
 				CB2067EF263E4550003CE39E /* Controller */,
 				CB2067DB263D957D003CE39E /* AppDelegate.swift */,
 				CB2067DD263D957D003CE39E /* SceneDelegate.swift */,
-				CB2067DF263D957D003CE39E /* WeatherVC.swift */,
 				CB2067E1263D957D003CE39E /* Main.storyboard */,
 				CB2067E4263D957E003CE39E /* Assets.xcassets */,
 				CB2067E6263D957E003CE39E /* LaunchScreen.storyboard */,
@@ -75,6 +76,7 @@
 		CB2067EF263E4550003CE39E /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				CB2067DF263D957D003CE39E /* WeatherVC.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -83,6 +85,7 @@
 			isa = PBXGroup;
 			children = (
 				CB2067F2263E457C003CE39E /* WeatherIconImageView.swift */,
+				CB2067F4263F7E6E003CE39E /* WeatherDetailView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -166,6 +169,7 @@
 			files = (
 				CB2067F3263E457C003CE39E /* WeatherIconImageView.swift in Sources */,
 				CB2067E0263D957D003CE39E /* WeatherVC.swift in Sources */,
+				CB2067F5263F7E6E003CE39E /* WeatherDetailView.swift in Sources */,
 				CB2067DC263D957D003CE39E /* AppDelegate.swift in Sources */,
 				CB2067DE263D957D003CE39E /* SceneDelegate.swift in Sources */,
 			);
