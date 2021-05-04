@@ -36,6 +36,7 @@ class WeatherVC: UIViewController {
     
     var hourlyForecast = [WeatherModel]()
     var dailyForecast = [WeatherModel]()
+    var isShowingHourly = true
     
     
     var weatherManager = WeatherManager()
@@ -49,6 +50,7 @@ class WeatherVC: UIViewController {
     
     func configure() {
         forcastView.alpha = 0
+        hideUI()
         forcastView.layer.cornerRadius = 10
         forcastControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.white], for: .selected)
         forcastControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor(red: 22 / 255, green: 54 / 255, blue: 58 / 255, alpha: 0.64)], for: .normal)
@@ -88,14 +90,49 @@ class WeatherVC: UIViewController {
 
     
     @objc func forcastControlToggled(_ sender: UISegmentedControl) {
-//        switch sender.selectedSegmentIndex {
-//        case 0:
-//        }
+        switch sender.selectedSegmentIndex {
+        case 0:
+            updateHourlyForecastUI()
+            hideUI()
+            animateUI()
+        case 1:
+            updateDailyForecastUI()
+            hideUI()
+            animateUI()
+        default:
+            break
+        }
     }
     
     func updateHourlyForecastUI() {
-        print("hourly forcast")
-        print(hourlyForecast)
+        _ = detailViews.enumerated().map { view in
+            view.element.updateUIForHourly(with: hourlyForecast[view.offset])
+        }
+    }
+    
+    func updateDailyForecastUI() {
+        _ = detailViews.enumerated().map({ view in
+            view.element.updateUIForDaily(with: dailyForecast[view.offset])
+        })
+    }
+    
+    func animateUI() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+            for view in self.detailViews {
+                UIView.animate(withDuration: 0.75) {
+                    view.alpha = 1
+                }
+                
+            }
+        }
+    }
+    
+    func hideUI() {
+        _ = detailViews.map({ view in
+            DispatchQueue.main.async {
+                view.alpha = 0
+            }
+        })
     }
 }
 
@@ -112,21 +149,20 @@ extension WeatherVC: WeatherManagerDelegate {
     
     func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
         DispatchQueue.main.async {
-            self.temperatureLabel.text = weather.temperatureString + "°"
+            self.temperatureLabel.text = weather.temperatureString + "°F"
             self.conditionImageView.image = UIImage(systemName: weather.conditionName)
             self.cityLabel.text = weather.cityName
             self.descriptionLabel.text = weather.description
             
-            
         }
-        
         DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.5) {
             UIView.animate(withDuration: 0.75) {
                 self.forcastView.alpha = 1
+                
             }
+            
         }
-        
-        
+        animateUI()
     }
     
     func didFailWithError(error: Error) {
