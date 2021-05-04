@@ -10,6 +10,7 @@ import CoreLocation
 
 protocol WeatherManagerDelegate {
     func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel)
+    func didUpdateForecast(_ weatherManager: WeatherManager, weather: ([WeatherModel], [WeatherModel]))
     func didFailWithError(error: Error)
 }
 
@@ -17,16 +18,20 @@ fileprivate let apiKey = "48d7c8f8e6f767f90b8ae438346b5f3a"
 
 struct WeatherManager {
     
-    let weatherUrl = "https://api.openweathermap.org/data/2.5/weather?appid=\(apiKey)&units=imperial"
     var delegate: WeatherManagerDelegate?
     
+    enum APIUrl {
+        static let singleCall = "https://api.openweathermap.org/data/2.5/weather?appid=\(apiKey)&units=imperial"
+        static let foreCastCall = "https://api.openweathermap.org/data/2.5/onecall?appid=\(apiKey)&units=imperial"
+    }
+    
     func fetchWeather(latitude: CLLocationDegrees, longitude: CLLocationDegrees) {
-        let urlString = "\(weatherUrl)&lat=\(latitude)&lon=\(longitude)"
+        let urlString = "\(APIUrl.singleCall)&lat=\(latitude)&lon=\(longitude)"
         performRequest(with: urlString)
     }
     
-    func fetchHourlyForecast(latitude: CLLocationDegrees, longitude: CLLocationDegrees) {
-        let urlString = "\(weatherUrl)&lat=\(latitude)&lon=\(longitude)&exclude=minutely,current,alerts"
+    func fetchForcast(latitude: CLLocationDegrees, longitude: CLLocationDegrees) {
+        let urlString = "\(APIUrl.foreCastCall)&lat=\(latitude)&lon=\(longitude)&exclude=minutely,current,alerts"
         performRequest(with: urlString)
     }
     
@@ -41,8 +46,12 @@ struct WeatherManager {
                 }
                 
                 if let safeData = data {
-                    if let weather = self.parseJSON(safeData) {
+                    if let weather = self.parseSingleCallData(safeData) {
                         self.delegate?.didUpdateWeather(self, weather: weather)
+                    } else {
+                        if let forecast = self.parseForecastCallData(safeData) {
+                            self.delegate?.didUpdateForecast(self, weather: forecast)
+                        }
                     }
                 }
             }
@@ -50,22 +59,49 @@ struct WeatherManager {
         }
     }
     
-    func parseJSON(_ weatherData: Data) -> WeatherModel? {
+    func parseSingleCallData(_ weatherData: Data) -> WeatherModel? {
         let decoder = JSONDecoder()
         
         do {
-            let decodedData = try decoder.decode(WeatherData.self, from: weatherData)
+            let decodedData = try decoder.decode(SingleCallWeatherData.self, from: weatherData)
             let id = decodedData.weather[0].id
             let temp = decodedData.main.temp
             let name = decodedData.name
             let description = decodedData.weather[0].description
+            print(decodedData)
             
-            let weather = WeatherModel(conditionId: id, cityName: name, temperature: temp, description: description)
+            let weather = WeatherModel(conditionId: id, cityName: name, temperature: temp, description: description, dt: nil)
             print(weather)
             return weather
         } catch {
             delegate?.didFailWithError(error: error)
             return nil
+        }
+    }
+    
+    func parseForecastCallData(_ weatherData: Data) -> ([WeatherModel], [WeatherModel])? {
+        let decoder = JSONDecoder()
+        var weather: ([WeatherModel], [WeatherModel])?
+        do {
+            var decodedData = try decoder.decode(ForecastCallWeatherData.self, from: weatherData)
+            decodedData.sortForecastData()
+            let hourly = decodedData.hourly
+            let daily = decodedData.daily
+            let hourlyData: [WeatherModel] = hourly.map { hourlyWeather in
+                let convertedData = WeatherModel(conditionId: hourlyWeather.weather[0].id, cityName: "", temperature: hourlyWeather.temp, description: hourlyWeather.weather[0].description, dt: hourlyWeather.dt)
+                return convertedData
+            }
+            
+            let dailyData: [WeatherModel] = daily.map { dailyWeather in
+                let convertedData = WeatherModel(conditionId: dailyWeather.weather[0].id, cityName: "", temperature: dailyWeather.temp.determineHourlyRead, description: dailyWeather.weather[0].description, dt: dailyWeather.dt)
+                return convertedData
+            }
+
+            weather = (hourlyData, dailyData)
+            return weather
+        } catch {
+            delegate?.didFailWithError(error: error)
+            return weather
         }
     }
 }

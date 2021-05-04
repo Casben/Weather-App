@@ -24,6 +24,20 @@ class WeatherVC: UIViewController {
     @IBOutlet weak var detailView4: WeatherDetailView!
     @IBOutlet weak var detailView5: WeatherDetailView!
     
+    lazy var detailViews: [WeatherDetailView] = {
+       var collection = Array<WeatherDetailView>()
+        collection.append(detailView1)
+        collection.append(detailView2)
+        collection.append(detailView3)
+        collection.append(detailView4)
+        collection.append(detailView5)
+        return collection
+    }()
+    
+    var hourlyForecast = [WeatherModel]()
+    var dailyForecast = [WeatherModel]()
+    
+    
     var weatherManager = WeatherManager()
     let locationManager = CLLocationManager()
     
@@ -33,8 +47,6 @@ class WeatherVC: UIViewController {
         configure()
     }
     
-    
-
     func configure() {
         forcastView.alpha = 0
         forcastView.layer.cornerRadius = 10
@@ -80,9 +92,24 @@ class WeatherVC: UIViewController {
 //        case 0:
 //        }
     }
+    
+    func updateHourlyForecastUI() {
+        print("hourly forcast")
+        print(hourlyForecast)
+    }
 }
 
 extension WeatherVC: WeatherManagerDelegate {
+    func didUpdateForecast(_ weatherManager: WeatherManager, weather: ([WeatherModel], [WeatherModel])) {
+        hourlyForecast = weather.0
+        dailyForecast = weather.1
+        updateHourlyForecastUI()
+    }
+    
+    
+    
+    
+    
     func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
         DispatchQueue.main.async {
             self.temperatureLabel.text = weather.temperatureString + "°"
@@ -116,7 +143,7 @@ extension WeatherVC: CLLocationManagerDelegate {
             let lat = location.coordinate.latitude
             let lon = location.coordinate.longitude
             weatherManager.fetchWeather(latitude: lat, longitude: lon)
-            weatherManager.fetchHourlyForecast(latitude: lat, longitude: lon)
+            weatherManager.fetchForcast(latitude: lat, longitude: lon)
         }
     }
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
