@@ -290,11 +290,25 @@
                                 <color key="textColor" red="0.087223179639999995" green="0.2117351294" blue="0.22803997989999999" alpha="0.64250795533056959" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yz4-T6-tuP">
+                                <rect key="frame" x="340" y="64" width="40" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="40" id="YcD-6F-Kar"/>
+                                    <constraint firstAttribute="height" constant="40" id="uoI-dU-wge"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="23"/>
+                                <color key="tintColor" red="0.087223179639999995" green="0.2117351294" blue="0.22803997989999999" alpha="0.64250795530000004" colorSpace="custom" customColorSpace="sRGB"/>
+                                <state key="normal" image="arrow.clockwise" catalog="system">
+                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="35" scale="default" weight="regular"/>
+                                </state>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemGreenColor"/>
                         <constraints>
+                            <constraint firstItem="yz4-T6-tuP" firstAttribute="top" secondItem="P4q-CZ-hMc" secondAttribute="top" id="2Gn-MA-8Sz"/>
                             <constraint firstItem="H7I-LS-ZeC" firstAttribute="top" secondItem="P4q-CZ-hMc" secondAttribute="bottom" constant="8" id="3rL-yy-XmQ"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="yz4-T6-tuP" secondAttribute="trailing" constant="20" id="52W-Gt-pD9"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="3WH-JE-DjX" secondAttribute="trailing" constant="20" id="9qu-Tz-Eeb"/>
                             <constraint firstItem="P4q-CZ-hMc" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="CTS-ET-C1n"/>
                             <constraint firstItem="3WH-JE-DjX" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Cqv-qt-6Sq"/>
@@ -322,6 +336,7 @@
                         <outlet property="detailView5" destination="Okq-gJ-kAy" id="4w7-R5-HR3"/>
                         <outlet property="forcastControl" destination="nk8-dU-jTs" id="6vW-jy-x2C"/>
                         <outlet property="forcastView" destination="3WH-JE-DjX" id="yT2-TJ-9zX"/>
+                        <outlet property="refreshButton" destination="yz4-T6-tuP" id="vpz-XV-3uc"/>
                         <outlet property="temperatureLabel" destination="LQa-J7-tCa" id="H6C-iA-d2J"/>
                     </connections>
                 </viewController>
@@ -331,6 +346,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="arrow.clockwise" catalog="system" width="115" height="128"/>
         <image name="background" width="662" height="662"/>
         <image name="cloud.rain" catalog="system" width="128" height="125"/>
         <image name="cloud.snow" catalog="system" width="128" height="128"/>

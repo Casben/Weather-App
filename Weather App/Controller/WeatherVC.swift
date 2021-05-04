@@ -10,6 +10,8 @@ import CoreLocation
 
 class WeatherVC: UIViewController {
 
+    //MARK: - Properties
+    
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var cityLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
@@ -17,6 +19,7 @@ class WeatherVC: UIViewController {
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var forcastView: UIView!
     @IBOutlet weak var forcastControl: UISegmentedControl!
+    @IBOutlet weak var refreshButton: UIButton!
     
     @IBOutlet weak var detailView1: WeatherDetailView!
     @IBOutlet weak var detailView2: WeatherDetailView!
@@ -36,17 +39,18 @@ class WeatherVC: UIViewController {
     
     var hourlyForecast = [WeatherModel]()
     var dailyForecast = [WeatherModel]()
-    var isShowingHourly = true
-    
-    
+
     var weatherManager = WeatherManager()
     let locationManager = CLLocationManager()
     
+    //MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configure()
     }
+    
+    //MARK: - Configuration
     
     func configure() {
         forcastView.alpha = 0
@@ -55,8 +59,17 @@ class WeatherVC: UIViewController {
         forcastControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.white], for: .selected)
         forcastControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor(red: 22 / 255, green: 54 / 255, blue: 58 / 255, alpha: 0.64)], for: .normal)
         forcastControl.addTarget(self, action: #selector(forcastControlToggled), for: .valueChanged)
+        refreshButton.addTarget(self, action: #selector(refreshWeatherData), for: .touchUpInside)
+        refreshButton.isEnabled = false
         configureDate()
         configureLocationManager()
+    }
+
+    func configureLocationManager() {
+        locationManager.delegate = self
+        weatherManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.requestLocation()
     }
     
     func configureDate() {
@@ -80,29 +93,8 @@ class WeatherVC: UIViewController {
             dateLabel.text = currentDate
         }
     }
-    
-    func configureLocationManager() {
-        locationManager.delegate = self
-        weatherManager.delegate = self
-        locationManager.requestWhenInUseAuthorization()
-        locationManager.requestLocation()
-    }
 
-    
-    @objc func forcastControlToggled(_ sender: UISegmentedControl) {
-        switch sender.selectedSegmentIndex {
-        case 0:
-            updateHourlyForecastUI()
-            hideUI()
-            animateUI()
-        case 1:
-            updateDailyForecastUI()
-            hideUI()
-            animateUI()
-        default:
-            break
-        }
-    }
+    //MARK: - Helpers
     
     func updateHourlyForecastUI() {
         _ = detailViews.enumerated().map { view in
@@ -134,6 +126,32 @@ class WeatherVC: UIViewController {
             }
         })
     }
+    
+    //MARK: - Methods
+    
+    @objc func forcastControlToggled(_ sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            updateHourlyForecastUI()
+            hideUI()
+            animateUI()
+        case 1:
+            updateDailyForecastUI()
+            hideUI()
+            animateUI()
+        default:
+            break
+        }
+    }
+    
+    @objc func refreshWeatherData() {
+        locationManager.requestLocation()
+        cityLabel.text = "Loading weather data"
+        descriptionLabel.text = "Please stand by..."
+        hideUI()
+        forcastView.alpha = 0
+        refreshButton.isEnabled = false
+    }
 }
 
 extension WeatherVC: WeatherManagerDelegate {
@@ -142,11 +160,7 @@ extension WeatherVC: WeatherManagerDelegate {
         dailyForecast = weather.1
         updateHourlyForecastUI()
     }
-    
-    
-    
-    
-    
+
     func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
         DispatchQueue.main.async {
             self.temperatureLabel.text = weather.temperatureString + "°F"
@@ -158,18 +172,22 @@ extension WeatherVC: WeatherManagerDelegate {
         DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.5) {
             UIView.animate(withDuration: 0.75) {
                 self.forcastView.alpha = 1
-                
+                self.refreshButton.isEnabled = true
             }
             
         }
         animateUI()
+        
     }
     
     func didFailWithError(error: Error) {
-        print(error)
+        let alertVC = UIAlertController(title: "Unable to load weather data.", message: error.localizedDescription, preferredStyle: .alert)
+        let action = UIAlertAction(title: "Ok", style: .default)
+        alertVC.addAction(action)
+        DispatchQueue.main.async {
+            self.present(alertVC, animated: true)
+        }
     }
-    
-    
 }
 
 extension WeatherVC: CLLocationManagerDelegate {

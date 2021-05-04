@@ -25,6 +25,8 @@ struct WeatherManager {
         static let foreCastCall = "https://api.openweathermap.org/data/2.5/onecall?appid=\(apiKey)&units=imperial"
     }
     
+    //MARK: - Methods for preparing for API call
+    
     func fetchWeather(latitude: CLLocationDegrees, longitude: CLLocationDegrees) {
         let urlString = "\(APIUrl.singleCall)&lat=\(latitude)&lon=\(longitude)"
         performRequest(with: urlString)
@@ -34,6 +36,8 @@ struct WeatherManager {
         let urlString = "\(APIUrl.foreCastCall)&lat=\(latitude)&lon=\(longitude)&exclude=minutely,current,alerts"
         performRequest(with: urlString)
     }
+    
+    //MARK: - Body of API call
     
     func performRequest(with urlString: String) {
         let session = URLSession(configuration: .default)
@@ -59,6 +63,8 @@ struct WeatherManager {
         }
     }
     
+    //MARK: - Methods for parsing API calls
+    
     func parseSingleCallData(_ weatherData: Data) -> WeatherModel? {
         let decoder = JSONDecoder()
         
@@ -68,10 +74,8 @@ struct WeatherManager {
             let temp = decodedData.main.temp
             let name = decodedData.name
             let description = decodedData.weather[0].description
-            print(decodedData)
-            
+
             let weather = WeatherModel(conditionId: id, cityName: name, temperature: temp, description: description, dt: nil)
-            print(weather)
             return weather
         } catch {
             delegate?.didFailWithError(error: error)
