@@ -154,6 +154,8 @@ class WeatherVC: UIViewController {
     }
 }
 
+//MARK: - WeatherManagerDelegate
+
 extension WeatherVC: WeatherManagerDelegate {
     func didUpdateForecast(_ weatherManager: WeatherManager, weather: ([WeatherModel], [WeatherModel])) {
         hourlyForecast = weather.0
@@ -181,14 +183,11 @@ extension WeatherVC: WeatherManagerDelegate {
     }
     
     func didFailWithError(error: Error) {
-        let alertVC = UIAlertController(title: "Unable to load weather data.", message: error.localizedDescription, preferredStyle: .alert)
-        let action = UIAlertAction(title: "Ok", style: .default)
-        alertVC.addAction(action)
-        DispatchQueue.main.async {
-            self.present(alertVC, animated: true)
-        }
+        print(error.localizedDescription)
     }
 }
+
+//MARK: - CLLocationManagerDelegate
 
 extension WeatherVC: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {

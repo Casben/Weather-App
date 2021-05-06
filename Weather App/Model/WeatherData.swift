@@ -7,6 +7,10 @@
 
 import Foundation
 
+struct Main: Codable {
+    let temp: Double
+}
+
 struct Weather: Codable {
     let id: Int
     let description: String
@@ -29,7 +33,7 @@ struct Daily: Codable {
         private let eve: Double
         private let morn: Double
         
-        var determineHourlyRead: Double {
+        var determinedHourlyRead: Double {
             let currentHour = Calendar.current.component(.hour, from: Date())
             
             switch currentHour {
@@ -51,13 +55,9 @@ struct Daily: Codable {
 }
 
 struct SingleCallWeatherData: Codable {
-    let name: String
     let main: Main
     let weather: [Weather]
-    
-    struct Main: Codable {
-        let temp: Double
-    }
+    let name: String?
 }
 
 
@@ -66,6 +66,8 @@ struct ForecastCallWeatherData: Codable {
     var hourly: [Hourly]
     var daily: [Daily]
 
+    //MARK: - Method that sorts and trims the arrays to the right length
+    
     mutating func sortForecastData() {
         hourly.sort { hour1, hour2 in
             return hour1.dt < hour2.dt
@@ -76,6 +78,6 @@ struct ForecastCallWeatherData: Codable {
         }
         
         hourly = Array(hourly.prefix(through: 5))
-        daily = Array(daily.prefix(upTo: 5))
+        daily = Array(daily.prefix(through: 5))
     }
 }

@@ -46,6 +46,7 @@ struct WeatherManager {
             let task = session.dataTask(with: url) { data, response, error in
                 if error != nil {
                     self.delegate?.didFailWithError(error: error!)
+                    print("task error")
                     return
                 }
                 
@@ -70,14 +71,10 @@ struct WeatherManager {
         
         do {
             let decodedData = try decoder.decode(SingleCallWeatherData.self, from: weatherData)
-            let id = decodedData.weather[0].id
-            let temp = decodedData.main.temp
-            let name = decodedData.name
-            let description = decodedData.weather[0].description
-
-            let weather = WeatherModel(conditionId: id, cityName: name, temperature: temp, description: description, dt: nil)
+            let weather = WeatherModel(conditionId: decodedData.weather[0].id, cityName: decodedData.name ?? "City not found..", temperature: decodedData.main.temp, description: decodedData.weather[0].description, dt: nil)
             return weather
         } catch {
+            print(error)
             delegate?.didFailWithError(error: error)
             return nil
         }
@@ -97,7 +94,7 @@ struct WeatherManager {
             }
             
             let dailyData: [WeatherModel] = daily.map { dailyWeather in
-                let convertedData = WeatherModel(conditionId: dailyWeather.weather[0].id, cityName: "", temperature: dailyWeather.temp.determineHourlyRead, description: dailyWeather.weather[0].description, dt: dailyWeather.dt)
+                let convertedData = WeatherModel(conditionId: dailyWeather.weather[0].id, cityName: "", temperature: dailyWeather.temp.determinedHourlyRead, description: dailyWeather.weather[0].description, dt: dailyWeather.dt)
                 return convertedData
             }
 
@@ -105,7 +102,7 @@ struct WeatherManager {
             return weather
         } catch {
             delegate?.didFailWithError(error: error)
-            return weather
+            return nil
         }
     }
 }

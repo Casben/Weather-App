@@ -9,10 +9,14 @@ import UIKit
 
 class WeatherDetailView: UIView {
 
+    //MARK: - Properties
+    
     @IBOutlet weak var informationLabel: UILabel!
     @IBOutlet weak var weatherIcon: WeatherIconImageView!
     @IBOutlet weak var tempLabel: UILabel!
 
+    //MARK: - Methods for configuring properties based on weatherData
+    
     func updateUIForHourly(with weatherData: WeatherModel) {
         let forecastHour = Date(timeIntervalSince1970: weatherData.dt!)
         var dateFormatter = Calendar.current.component(.hour, from: forecastHour)
