@@ -9,8 +9,8 @@ import Foundation
 import CoreLocation
 
 protocol WeatherManagerDelegate {
-    func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel)
-    func didUpdateForecast(_ weatherManager: WeatherManager, weather: ([WeatherModel], [WeatherModel]))
+    func didUpdateWeather(_ weatherManager: WeatherManager, weather: SingleCallWeatherData)
+    func didUpdateForecast(_ weatherManager: WeatherManager, weather: inout ForecastCallWeatherData)
     func didFailWithError(error: Error)
 }
 
@@ -18,6 +18,7 @@ fileprivate let apiKey = "48d7c8f8e6f767f90b8ae438346b5f3a"
 
 struct WeatherManager {
     
+    let decoder = JSONDecoder()
     var delegate: WeatherManagerDelegate?
     
     enum APIUrl {
@@ -54,8 +55,8 @@ struct WeatherManager {
                     if let weather = self.parseSingleCallData(safeData) {
                         self.delegate?.didUpdateWeather(self, weather: weather)
                     } else {
-                        if let forecast = self.parseForecastCallData(safeData) {
-                            self.delegate?.didUpdateForecast(self, weather: forecast)
+                        if var forecast = self.parseForecastCallData(safeData) {
+                            self.delegate?.didUpdateForecast(self, weather: &forecast)
                         }
                     }
                 }
@@ -66,13 +67,11 @@ struct WeatherManager {
     
     //MARK: - Methods for parsing API calls
     
-    func parseSingleCallData(_ weatherData: Data) -> WeatherModel? {
-        let decoder = JSONDecoder()
+    func parseSingleCallData(_ weatherData: Data) -> SingleCallWeatherData? {
         
         do {
             let decodedData = try decoder.decode(SingleCallWeatherData.self, from: weatherData)
-            let weather = WeatherModel(conditionId: decodedData.weather[0].id, cityName: decodedData.name ?? "City not found..", temperature: decodedData.main.temp, description: decodedData.weather[0].description, dt: nil)
-            return weather
+            return decodedData
         } catch {
             print(error)
             delegate?.didFailWithError(error: error)
@@ -80,29 +79,17 @@ struct WeatherManager {
         }
     }
     
-    func parseForecastCallData(_ weatherData: Data) -> ([WeatherModel], [WeatherModel])? {
-        let decoder = JSONDecoder()
-        var weather: ([WeatherModel], [WeatherModel])?
+    func parseForecastCallData(_ weatherData: Data) -> ForecastCallWeatherData? {
+        
         do {
-            var decodedData = try decoder.decode(ForecastCallWeatherData.self, from: weatherData)
-            decodedData.sortForecastData()
-            let hourly = decodedData.hourly
-            let daily = decodedData.daily
-            let hourlyData: [WeatherModel] = hourly.map { hourlyWeather in
-                let convertedData = WeatherModel(conditionId: hourlyWeather.weather[0].id, cityName: "", temperature: hourlyWeather.temp, description: hourlyWeather.weather[0].description, dt: hourlyWeather.dt)
-                return convertedData
-            }
+            let decodedData = try decoder.decode(ForecastCallWeatherData.self, from: weatherData)
+            return decodedData
             
-            let dailyData: [WeatherModel] = daily.map { dailyWeather in
-                let convertedData = WeatherModel(conditionId: dailyWeather.weather[0].id, cityName: "", temperature: dailyWeather.temp.determinedHourlyRead, description: dailyWeather.weather[0].description, dt: dailyWeather.dt)
-                return convertedData
-            }
-
-            weather = (hourlyData, dailyData)
-            return weather
         } catch {
             delegate?.didFailWithError(error: error)
             return nil
         }
     }
 }
+
+
