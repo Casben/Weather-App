@@ -20,15 +20,28 @@ class WeatherDetailView: UIView {
     func updateUIForHourly(with weatherData: WeatherModel) {
         let forecastHour = Date(timeIntervalSince1970: weatherData.dt!)
         var dateFormatter = Calendar.current.component(.hour, from: forecastHour)
+        var amOrPM = ""
+        
+        switch dateFormatter {
+        case 1...11:
+            amOrPM = "A.M."
+        case 12...23:
+            amOrPM = "P.M."
+        default:
+            break
+        }
+        
         switch dateFormatter {
         case 24:
             dateFormatter = 1
         default:
+            dateFormatter -= 12
             dateFormatter += 1
         }
+        
     
         DispatchQueue.main.async {
-            self.informationLabel.text = String(dateFormatter) + ":00"
+            self.informationLabel.text = String(dateFormatter) + ":00" + " \(amOrPM)"
             self.weatherIcon.image = UIImage(systemName: weatherData.conditionName)
             self.tempLabel.text = weatherData.temperatureString + "°F"
             
