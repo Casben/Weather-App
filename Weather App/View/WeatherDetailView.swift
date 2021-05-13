@@ -21,24 +21,32 @@ class WeatherDetailView: UIView {
         let forecastHour = Date(timeIntervalSince1970: weatherData.dt!)
         var dateFormatter = Calendar.current.component(.hour, from: forecastHour)
         var amOrPM = ""
+        var isBeforeNoon: Bool?
         
         switch dateFormatter {
+        case 0:
+            dateFormatter += 1
+            isBeforeNoon = true
         case 1...11:
-            amOrPM = "A.M."
-        case 12...23:
-            amOrPM = "P.M."
+            dateFormatter += 1
+            isBeforeNoon = true
+        case 13...24:
+            dateFormatter += 1
+            dateFormatter -= 12
+            isBeforeNoon = false
         default:
             break
         }
         
-        switch dateFormatter {
-        case 24:
-            dateFormatter = 1
-        default:
-            dateFormatter -= 12
-            dateFormatter += 1
-        }
         
+        switch isBeforeNoon {
+        case true:
+            amOrPM = "A.M."
+        case false:
+            amOrPM = "P.M."
+        default:
+            break
+        }
     
         DispatchQueue.main.async {
             self.informationLabel.text = String(dateFormatter) + ":00" + " \(amOrPM)"
