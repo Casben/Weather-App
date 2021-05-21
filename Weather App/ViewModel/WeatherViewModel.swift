@@ -14,7 +14,7 @@ struct WeatherViewModel {
         return currentWeather
     }
     
-    func configureForecastWeatherData(withWeather data: inout ForecastCallWeatherData) -> ([WeatherModel], [WeatherModel]) {
+    func configureForecastWeatherData(withWeather data: inout ForecastCallWeatherData) -> ( hourly: [WeatherModel], forecast: [WeatherModel]) {
         var weather: ([WeatherModel], [WeatherModel])
         data.sortForecastData()
         let hourly = data.hourly

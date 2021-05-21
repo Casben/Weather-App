@@ -18,26 +18,25 @@ class WeatherDetailView: UIView {
     //MARK: - Methods for configuring properties based on weatherData
     
     func updateUIForHourly(with weatherData: WeatherModel) {
-        let forecastHour = Date(timeIntervalSince1970: weatherData.dt!)
-        var dateFormatter = Calendar.current.component(.hour, from: forecastHour)
+        let date = Date(timeIntervalSince1970: weatherData.dt!)
+        var forecastHour = Calendar.current.component(.hour, from: date)
         var amOrPM = ""
         var isBeforeNoon: Bool?
         
-        switch dateFormatter {
+        switch forecastHour {
         case 0:
-            dateFormatter += 1
+            forecastHour += 1
             isBeforeNoon = true
         case 1...11:
-            dateFormatter += 1
+            forecastHour += 1
             isBeforeNoon = true
         case 13...24:
-            dateFormatter += 1
-            dateFormatter -= 12
+            forecastHour += 1
+            forecastHour -= 12
             isBeforeNoon = false
         default:
             break
         }
-        
         
         switch isBeforeNoon {
         case true:
@@ -49,7 +48,7 @@ class WeatherDetailView: UIView {
         }
     
         DispatchQueue.main.async {
-            self.informationLabel.text = String(dateFormatter) + ":00" + " \(amOrPM)"
+            self.informationLabel.text = String(forecastHour) + ":00" + " \(amOrPM)"
             self.weatherIcon.image = UIImage(systemName: weatherData.conditionName)
             self.tempLabel.text = weatherData.temperatureString + "°F"
             

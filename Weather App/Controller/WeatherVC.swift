@@ -142,8 +142,10 @@ extension WeatherVC: WeatherManagerDelegate {
     
     func didUpdateForecast(_ weatherManager: WeatherManager, weather: inout ForecastCallWeatherData) {
         let forecastWeather = viewModel.configureForecastWeatherData(withWeather: &weather)
+        
         hourlyForecast = forecastWeather.0
         dailyForecast = forecastWeather.1
+        
         DispatchQueue.main.async {
             self.weatherCollectionView.reloadData()
         }
@@ -151,12 +153,14 @@ extension WeatherVC: WeatherManagerDelegate {
     
     func didUpdateWeather(_ weatherManager: WeatherManager, weather: SingleCallWeatherData) {
         let currentWeather = viewModel.configureWeatherData(withWeather: weather)
+        
         DispatchQueue.main.async {
             self.temperatureLabel.text = currentWeather.temperatureString
             self.conditionImageView.image = UIImage(systemName: currentWeather.conditionName)
             self.cityLabel.text = currentWeather.cityName
             self.descriptionLabel.text = currentWeather.description
         }
+        
         DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.5) {
             UIView.animate(withDuration: 0.75) {
                 self.forcastView.alpha = 1
