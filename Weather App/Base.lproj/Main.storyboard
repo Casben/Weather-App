@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -33,13 +34,13 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LQa-J7-tCa">
-                                <rect key="frame" x="275" y="213" width="0.0" height="0.0"/>
+                                <rect key="frame" x="275" y="211" width="0.0" height="0.0"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="34"/>
                                 <color key="textColor" red="0.087223179639999995" green="0.2117351294" blue="0.22803997989999999" alpha="0.64250795533056959" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="cloud.sun.rain" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="0vF-cc-FKc">
-                                <rect key="frame" x="147" y="152" width="122.5" height="125.5"/>
+                                <rect key="frame" x="147" y="152.5" width="121" height="125.5"/>
                                 <color key="tintColor" red="0.087223179639999995" green="0.2117351294" blue="0.22803997989999999" alpha="0.64250795530000004" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="120" id="1QY-yq-tSb"/>
@@ -57,7 +58,7 @@
                                         </segments>
                                         <color key="selectedSegmentTintColor" red="0.087223179639999995" green="0.2117351294" blue="0.22803997989999999" alpha="0.64250795533056959" colorSpace="custom" customColorSpace="sRGB"/>
                                     </segmentedControl>
-                                    <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="ZeY-kZ-0au">
+                                    <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="ZeY-kZ-0au">
                                         <rect key="frame" x="20" y="71" width="334" height="171"/>
                                         <color key="backgroundColor" red="0.90490655539999998" green="0.94242376269999995" blue="0.92507801560000003" alpha="0.20371521410000001" colorSpace="custom" customColorSpace="sRGB"/>
                                         <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="2qz-rc-dkL">
@@ -203,7 +204,7 @@
     <resources>
         <image name="arrow.clockwise" catalog="system" width="115" height="128"/>
         <image name="background" width="662" height="662"/>
-        <image name="cloud.sun.rain" catalog="system" width="128" height="125"/>
+        <image name="cloud.sun.rain" catalog="system" width="128" height="128"/>
         <image name="sun.min" catalog="system" width="128" height="121"/>
     </resources>
 </document>
